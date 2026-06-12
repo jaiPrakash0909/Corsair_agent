@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 267 92% 64%;
+  --accent-foreground: 0 0% 100%;
+  --primary: 222 47% 11%;
+  --primary-foreground: 0 0% 100%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 267 92% 64%;
+}
+
+.dark {
+  --background: 222 47% 7%;
+  --foreground: 210 40% 98%;
+  --card: 222 47% 10%;
+  --card-foreground: 210 40% 98%;
+  --muted: 217 33% 15%;
+  --muted-foreground: 215 20% 70%;
+  --accent: 267 92% 70%;
+  --accent-foreground: 222 47% 7%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 222 47% 11%;
+  --border: 217 33% 18%;
+  --input: 217 33% 18%;
+  --ring: 267 92% 70%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(147, 51, 234, 0.14), transparent 34rem),
+    linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+  color: hsl(var(--foreground));
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.glass {
+  background: color-mix(in srgb, hsl(var(--card)) 78%, transparent);
+  backdrop-filter: blur(18px);
+}

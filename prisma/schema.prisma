@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum EmailPriority {
+  URGENT
+  IMPORTANT
+  NORMAL
+}
+
+model User {
+  id             String           @id @default(cuid())
+  email          String           @unique
+  name           String?
+  image          String?
+  emailVerified  DateTime?
+  createdAt      DateTime         @default(now())
+  accounts       Account[]
+  sessions       Session[]
+  emails         Email[]
+  events         Event[]
+  commandHistory CommandHistory[]
+}
+
+model Email {
+  id        String        @id @default(cuid())
+  userId    String
+  gmailId   String
+  sender    String
+  recipient String
+  subject   String
+  body      String
+  summary   String?
+  priority  EmailPriority @default(NORMAL)
+  starred   Boolean       @default(false)
+  archived  Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, gmailId])
+  @@index([userId, priority])
+  @@index([userId, createdAt])
+}
+
+model Event {
+  id              String   @id @default(cuid())
+  userId          String
+  calendarEventId String
+  title           String
+  description     String?
+  startTime       DateTime
+  endTime         DateTime
+  createdAt       DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, calendarEventId])
+  @@index([userId, startTime])
+}
+
+model CommandHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  prompt    String
+  result    Json
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
