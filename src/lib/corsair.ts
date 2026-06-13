@@ -59,10 +59,17 @@ export async function ensureCorsairTenantSetup(userId: string) {
     return existing;
   }
 
-  const setupPromise = setupCorsair(corsair, {
-    tenantId: userId,
-    credentials: getSetupCredentials()
-  }).then(() => undefined);
+
+//
+const setupPromise = setupCorsair(corsair, {
+  tenantId: userId
+}).then(() => undefined);
+
+
+  // const setupPromise = setupCorsair(corsair, {
+  //   tenantId: userId,
+  //   credentials: getSetupCredentials()
+  // }).then(() => undefined);
 
   setupPromises.set(userId, setupPromise);
   return setupPromise;
