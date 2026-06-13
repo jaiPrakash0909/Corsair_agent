@@ -1,23 +1,40 @@
 import { addDays } from "date-fns";
-import { getCorsairTenant } from "@/lib/corsair";
+import { ensureCorsairTenantSetup, getCorsairTenant } from "@/lib/corsair";
 import { eventRepository } from "@/repositories/event.repository";
 import { runFirstAvailable } from "@/services/corsair-runner";
 
 const eventListPaths = [
-  ["googleCalendar", "db", "events", "search"],
-  ["googlecalendar", "db", "events", "search"],
-  ["calendar", "db", "events", "search"],
-  ["googleCalendar", "api", "events", "list"],
-  ["googlecalendar", "api", "events", "list"]
+  ["googlecalendar", "api", "events", "getMany"]
 ];
+
+function toArray<T = any>(value: any): T[] {
+  if (Array.isArray(value)) return value;
+  if (Array.isArray(value?.items)) return value.items;
+  if (Array.isArray(value?.data?.items)) return value.data.items;
+  if (Array.isArray(value?.data)) return value.data;
+  return [];
+}
+
+function eventStart(event: any) {
+  return event.startTime ?? event.start?.dateTime ?? event.start?.date;
+}
+
+function eventEnd(event: any) {
+  return event.endTime ?? event.end?.dateTime ?? event.end?.date;
+}
 
 export const calendarService = {
   async syncEvents(userId: string) {
+    await ensureCorsairTenantSetup(userId);
     const tenant = getCorsairTenant(userId) as any;
-    const events = (await runFirstAvailable(tenant, eventListPaths, {
+    const response = await runFirstAvailable(tenant, eventListPaths, {
       timeMin: new Date().toISOString(),
-      timeMax: addDays(new Date(), 30).toISOString()
-    })) as any[];
+      timeMax: addDays(new Date(), 30).toISOString(),
+      singleEvents: true,
+      orderBy: "startTime",
+      maxResults: 100
+    });
+    const events = toArray(response);
 
     return Promise.all(
       events.map((event) => {
@@ -27,8 +44,8 @@ export const calendarService = {
           calendarEventId: String(data.id ?? data.eventId ?? data.entity_id),
           title: String(data.title ?? data.summary ?? "Untitled event"),
           description: data.description,
-          startTime: new Date(data.startTime ?? data.start?.dateTime ?? data.start),
-          endTime: new Date(data.endTime ?? data.end?.dateTime ?? data.end)
+          startTime: new Date(eventStart(data)),
+          endTime: new Date(eventEnd(data))
         });
       })
     );
@@ -41,21 +58,24 @@ export const calendarService = {
     userId: string,
     input: { title: string; description?: string; startTime: string; endTime: string; guests: string[] }
   ) {
+    await ensureCorsairTenantSetup(userId);
     const tenant = getCorsairTenant(userId) as any;
     const created = await runFirstAvailable(
       tenant,
       [
         ["googleCalendar", "api", "events", "create"],
-        ["googlecalendar", "api", "events", "create"],
-        ["calendar", "api", "events", "create"]
+        ["googlecalendar", "api", "events", "create"]
       ],
       {
-        title: input.title,
-        summary: input.title,
-        description: input.description,
-        startTime: input.startTime,
-        endTime: input.endTime,
-        attendees: input.guests
+        calendarId: "primary",
+        sendUpdates: "all",
+        event: {
+          summary: input.title,
+          description: input.description,
+          start: { dateTime: input.startTime },
+          end: { dateTime: input.endTime },
+          attendees: input.guests.map((email) => ({ email }))
+        }
       }
     );
 
@@ -72,27 +92,52 @@ export const calendarService = {
     return created;
   },
   async updateEvent(userId: string, input: { eventId: string; title?: string; description?: string; startTime?: string; endTime?: string }) {
+    await ensureCorsairTenantSetup(userId);
     const tenant = getCorsairTenant(userId) as any;
-    return runFirstAvailable(
+    const event = {
+      ...(input.title ? { summary: input.title } : {}),
+      ...(input.description ? { description: input.description } : {}),
+      ...(input.startTime ? { start: { dateTime: input.startTime } } : {}),
+      ...(input.endTime ? { end: { dateTime: input.endTime } } : {})
+    };
+    const updated = await runFirstAvailable(
       tenant,
       [
         ["googleCalendar", "api", "events", "update"],
-        ["googlecalendar", "api", "events", "update"],
-        ["calendar", "api", "events", "update"]
+        ["googlecalendar", "api", "events", "update"]
       ],
-      input
+      {
+        calendarId: "primary",
+        id: input.eventId,
+        sendUpdates: "all",
+        event
+      }
     );
+
+    const data = (updated as any)?.data ?? updated;
+    if (data?.id) {
+      await eventRepository.upsertFromCorsair({
+        userId,
+        calendarEventId: String(data.id),
+        title: String(data.summary ?? input.title ?? "Untitled event"),
+        description: data.description ?? input.description,
+        startTime: new Date(eventStart(data) ?? input.startTime),
+        endTime: new Date(eventEnd(data) ?? input.endTime)
+      });
+    }
+
+    return updated;
   },
   async deleteEvent(userId: string, eventId: string) {
+    await ensureCorsairTenantSetup(userId);
     const tenant = getCorsairTenant(userId) as any;
     const deleted = await runFirstAvailable(
       tenant,
       [
         ["googleCalendar", "api", "events", "delete"],
-        ["googlecalendar", "api", "events", "delete"],
-        ["calendar", "api", "events", "delete"]
+        ["googlecalendar", "api", "events", "delete"]
       ],
-      { eventId }
+      { calendarId: "primary", id: eventId, sendUpdates: "all" }
     );
     await eventRepository.deleteLocal(userId, eventId);
     return deleted;
