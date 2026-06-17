@@ -100,6 +100,50 @@ textarea {
 }
 
 
+.rbc-calendar {
+  background: #09090b;
+  color: white;
+}
 
+.rbc-toolbar {
+  color: white;
+}
 
+.rbc-header {
+  background: #111827;
+  color: white;
+  padding: 10px;
+}
 
+.rbc-month-view {
+  border: 1px solid #27272a;
+}
+
+.rbc-day-bg {
+  background: #09090b;
+}
+
+.rbc-off-range-bg {
+  background: #111111;
+}
+
+.rbc-event {
+  background: #127173;
+  border: none;
+}
+
+.rbc-toolbar {
+  background: #09090b;
+  padding: 12px;
+  border-bottom: 1px solid #27272a;
+}
+
+.rbc-toolbar button {
+  background: #18181b;
+  color: white;
+  border: 1px solid #27272a;
+}
+
+.rbc-toolbar button.rbc-active {
+  background: #127173;
+}

@@ -42,18 +42,65 @@ export function CreateEventForm() {
   }
 
   return (
-    <Card>
-      <CardHeader><CardTitle>Create Event</CardTitle></CardHeader>
-      <CardContent>
-        <form onSubmit={submit} className="space-y-3">
-          <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Title" required />
-          <Textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Description" />
-          <Input value={startTime} onChange={(event) => setStartTime(event.target.value)} type="datetime-local" required />
-          <Input value={endTime} onChange={(event) => setEndTime(event.target.value)} type="datetime-local" required />
-          <Input value={guests} onChange={(event) => setGuests(event.target.value)} placeholder="Guests, comma separated" />
-          <Button className="w-full" type="submit"><CalendarPlus className="h-4 w-4" />Create</Button>
-        </form>
-      </CardContent>
-    </Card>
+
+
+
+
+
+
+
+
+<CardContent>
+  <form onSubmit={submit} className="space-y-4">
+
+    <Input
+      value={title}
+      onChange={(event) => setTitle(event.target.value)}
+      placeholder="Event Title"
+      required
+      className="h-12 rounded-xl border-zinc-800 bg-black"
+    />
+
+    <Textarea
+      value={description}
+      onChange={(event) => setDescription(event.target.value)}
+      placeholder="Event Description"
+      className="min-h-[100px] rounded-xl border-zinc-800 bg-black"
+    />
+
+    <Input
+      value={startTime}
+      onChange={(event) => setStartTime(event.target.value)}
+      type="datetime-local"
+      required
+      className="h-12 rounded-xl border-zinc-800 bg-black"
+    />
+
+    <Input
+      value={endTime}
+      onChange={(event) => setEndTime(event.target.value)}
+      type="datetime-local"
+      required
+      className="h-12 rounded-xl border-zinc-800 bg-black"
+    />
+
+    <Input
+      value={guests}
+      onChange={(event) => setGuests(event.target.value)}
+      placeholder="Guests (comma separated)"
+      className="h-12 rounded-xl border-zinc-800 bg-black"
+    />
+
+    <Button
+      type="submit"
+      className="w-full h-12 rounded-xl bg-[#127173]"
+    >
+      <CalendarPlus className="mr-2 h-4 w-4" />
+      Create Event
+    </Button>
+
+  </form>
+</CardContent>
+
   );
 }

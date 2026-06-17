@@ -16,9 +16,9 @@ export default async function LoginPage() {
       <header className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black font-bold">
-            M
+            C
           </div>
-          <span className="text-lg font-semibold">MailPilot AI</span>
+          <span className="text-lg font-semibold">Camail Ai</span>
         </div>
 
         <nav className="hidden md:flex items-center gap-8 text-sm text-zinc-400">
@@ -136,121 +136,3 @@ export default async function LoginPage() {
     </main>
   );
 }
-
-
-
-
-
-
-
-
-
-  // <Mail className="h-7 w-7 text-white" />
-
-  //            <Mail className="h-5 w-5" />
-
-
-
-
-
-
-
-
-
-
-// import { redirect } from "next/navigation";
-// import { Mail } from "lucide-react";
-// import { auth, signIn } from "@/lib/auth";
-// import { Button } from "@/components/ui/button";
-
-// export default async function LoginPage() {
-//   const session = await auth();
-//   if (session?.user) redirect("/dashboard");
-
-//   return (
-//     // <main className="grid min-h-screen place-items-center px-4">
-//     <main
-//   className="
-//     relative grid min-h-screen place-items-center
-//     overflow-hidden px-4
-//     bg-background
-//   "
-// >
-//   <div
-//   className="
-//     absolute inset-0
-//     bg-[radial-gradient(circle_at_top,rgba(18,113,115,0.25),transparent_45%)]
-//   "
-// />
-//       {/* <div className="w-full max-w-md rounded-lg border glass p-8 shadow-2xl"> */}
-//       <div
-//   className="
-//     relative z-10
-//     w-full max-w-md
-//     rounded-3xl
-//     border border-border/50
-//     glass
-//     bg-card
-//     p-10
-//     shadow-2xl
-//   "
-// >
-//         {/* <div className="mb-8 flex items-center gap-3"> */}
-//         <div className="mb-8 flex flex-col items-center text-center">
-
-
-
-// <div
-//   className="
-//     mb-5 flex h-16 w-16 items-center justify-center
-//     rounded-2xl
-//     bg-primary
-//     shadow-lg
-//   "
-// >
-//   <Mail className="h-7 w-7 text-white" />
-// </div>
-//           {/* <div className="flex h-11 w-11 items-center justify-center rounded-md bg-accent text-accent-foreground">
-//             <Mail className="h-5 w-5" />
-//           </div> */}
-
-
-//           <div>
-//             {/* <h1 className="text-2xl font-semibold">Corsair Agent AI</h1>
-//             <p className="text-sm text-muted-foreground">Your AI email and calendar cockpit.</p> */}
-//             <h1 className="text-3xl font-bold tracking-tight">
-//   MailPilot AI
-// </h1>
-
-// <p className="mt-2 text-sm text-muted-foreground">
-//   AI-powered email and calendar workspace
-// </p>
-//           </div>
-//         </div>
-//         <form
-//           action={async () => {
-//             "use server";
-//             await signIn("google", { redirectTo: "/dashboard" });
-//           }}
-//         >
-//           {/* <Button className="w-full" type="submit">Continue with Google</Button> */}
-//           <Button
-//   className="
-//     h-12 w-full
-//     rounded-xl
-//     bg-primary
-//     text-primary-foreground
-//     hover:bg-[#118F90]
-//   "
-//   type="submit"
-// >
-//   Continue with Google
-// </Button>
-//         </form>
-//         <p className="mt-6 text-center text-xs text-muted-foreground">
-//   Secure • Private • AI Powered
-// </p>
-//       </div>
-//     </main>
-//   );
-// }
