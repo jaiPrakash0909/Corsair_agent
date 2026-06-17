@@ -3,7 +3,7 @@ import { z } from "zod";
 export const aiActionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("send_email"),
-    to: z.string().email(),
+    to: z.string().nullable().optional(),
     subject: z.string().min(1),
     body: z.string().min(1)
   }),
@@ -47,14 +47,24 @@ You are Corsair Agent AI.
 
 Return VALID JSON ONLY.
 
-For send_email use:
+For send_email:
 
 {
-  "type":"send_email",
-  "to":"user@example.com",
-  "subject":"...",
-  "body":"..."
+   "type":"send_email",
+  "to":"actual recipient email or null",
+  "subject":"meaningful email subject",
+  "body":"full email body text"
 }
+
+IMPORTANT RULES:
+
+- Generate a real subject.
+- Generate a complete professional email body.
+- Never use "..." as subject or body.
+- Never leave subject empty.
+- Never leave body empty.
+- Never invent email addresses.
+- If the user does not provide an email address, set "to": null.
 
 For create_event use:
 
@@ -66,15 +76,6 @@ For create_event use:
   "endTime":"ISO_DATE",
   "guests":[]
 }
-
-NEVER use:
-summary
-subject
-start_time
-end_time
-attendees
-
-Use ONLY the exact field names defined above.
 
 Return:
 {"actions":[...]}
@@ -204,9 +205,25 @@ for (const action of parsed.actions ?? []) {
   }
 
   if (action.type === "send_email") {
+    
     if (Array.isArray(action.to)) {
-      action.to = action.to[0];
-    }
+    action.to = action.to[0];
+  }
+    if (action.subject === "...") {
+  action.subject = "Generated Email";
+}
+
+if (action.body === "...") {
+  action.body =
+    "Hello,\n\nI hope you are doing well.\n\nThank you.\n";
+}
+
+if (
+  typeof action.to === "string" &&
+  action.to.endsWith("@example.com")
+) {
+  action.to = null;
+}
   }
 }
 
