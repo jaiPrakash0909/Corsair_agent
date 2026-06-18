@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+// import "react-big-calendar/lib/css/react-big-calendar.css";
 
 
 const locales = {};
@@ -39,14 +39,17 @@ export function CalendarView({ events }: any) {
 <div className="h-[450px] w-full">
     <Calendar
       localizer={localizer}
-      events={calendarEvents}
-      startAccessor="start"
-      endAccessor="end"
-      defaultView="month"
-      onSelectEvent={(event) => {
-        setSelectedEvent(event);
-        setOpen(true);
-      }}
+  events={calendarEvents}
+  startAccessor="start"
+  endAccessor="end"
+  defaultView="month"
+  toolbar={true}
+  popup
+  style={{ height: 450 }}
+  onSelectEvent={(event) => {
+    setSelectedEvent(event);
+    setOpen(true);
+  }}
     />
   </div>
 

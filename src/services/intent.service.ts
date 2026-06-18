@@ -2,6 +2,16 @@ export function detectIntent(prompt: string) {
   const text = prompt.toLowerCase();
 
   if (
+    text.includes("send email") ||
+    text.includes("schedule") ||
+    text.includes("meeting") ||
+    text.includes("calendar") ||
+    text.includes("event")
+  ) {
+    return "action";
+  }
+
+  if (
     text.includes("email") ||
     text.includes("emails")
   ) {
@@ -11,48 +21,3 @@ export function detectIntent(prompt: string) {
   return "chat";
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// export function detectIntent(prompt: string) {
-//   const text = prompt.toLowerCase();
-
-//   const actionKeywords = [
-//     "email",
-//     "mail",
-//     "meeting",
-//     "calendar",
-//     "schedule",
-//     "event",
-//     "send",
-//     "reply",
-//     "invite",
-//     "delete event",
-//     "update event",
-//   ];
-
-//   const isAction = actionKeywords.some((keyword) =>
-//     text.includes(keyword)
-//   );
-
-//   return isAction ? "action" : "chat";
-// }

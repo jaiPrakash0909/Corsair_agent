@@ -8,20 +8,20 @@ export const aiActionSchema = z.discriminatedUnion("type", [
     body: z.string().min(1)
   }),
   z.object({
-    type: z.literal("create_event"),
-    title: z.string().min(1),
-    description: z.string().optional(),
-    startTime: z.string().datetime(),
-    endTime: z.string().datetime(),
-    guests: z.array(z.string().email()).default([])
-  }),
+  type: z.literal("create_event"),
+  title: z.string().min(1),
+  description: z.string().optional(),
+  startTime: z.string(),
+  endTime: z.string(),
+  guests: z.array(z.string().email()).default([])
+}),
   z.object({
     type: z.literal("update_event"),
     eventId: z.string().min(1),
     title: z.string().optional(),
     description: z.string().optional(),
-    startTime: z.string().datetime().optional(),
-    endTime: z.string().datetime().optional()
+    startTime: z.string().optional(),
+endTime: z.string().optional(),
   }),
   z.object({
     type: z.literal("delete_event"),
@@ -47,10 +47,23 @@ You are Corsair Agent AI.
 
 Return VALID JSON ONLY.
 
+
+IMPORTANT:
+Current date is ${new Date().toISOString()}.
+
+For create_event:
+- Always use future dates.
+- If user says "tomorrow", calculate tomorrow from the current date.
+- Never generate dates from past years.
+- Use ISO datetime with timezone.
+- Assume timezone Asia/Kolkata.
+
+
+
 For send_email:
 
 {
-   "type":"send_email",
+  "type":"send_email",
   "to":"actual recipient email or null",
   "subject":"meaningful email subject",
   "body":"full email body text"
@@ -76,6 +89,19 @@ For create_event use:
   "endTime":"ISO_DATE",
   "guests":[]
 }
+
+IMPORTANT:
+
+Today is CURRENT_DATE.
+
+- If user says "today", use today's date.
+- If user says "tomorrow", use tomorrow's date.
+- Never generate dates from previous years.
+- Always generate future dates.
+- Use ISO datetime format.
+- Assume timezone Asia/Kolkata.
+
+
 
 Return:
 {"actions":[...]}
@@ -205,7 +231,6 @@ for (const action of parsed.actions ?? []) {
   }
 
   if (action.type === "send_email") {
-    
     if (Array.isArray(action.to)) {
     action.to = action.to[0];
   }
@@ -226,6 +251,31 @@ if (
 }
   }
 }
+
+
+
+for (const action of parsed.actions ?? []) {
+  if (action.type === "create_event") {
+    const start = new Date(action.startTime);
+
+    if (start.getFullYear() < 2026) {
+      const tomorrow = new Date();
+
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      action.startTime = tomorrow.toISOString();
+
+      const end = new Date(tomorrow);
+      end.setHours(end.getHours() + 1);
+
+      action.endTime = end.toISOString();
+    }
+  }
+}
+
+
+
+
 
 return aiCommandSchema.parse(parsed);
   // **

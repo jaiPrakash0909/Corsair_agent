@@ -89,21 +89,7 @@ setMessages((items) => [
   return (
     <div className="flex h-[calc(100vh-120px)] flex-col">
       {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-          <Sparkles className="h-6 w-6" />
-        </div>
-
-        <div>
-          <h1 className="text-3xl font-bold">
-            MailPilot AI
-          </h1>
-
-          <p className="text-sm text-muted-foreground">
-            Your email and calendar copilot
-          </p>
-        </div>
-      </div>
+      
 
       {/* Chat Area */}
       <Card className="flex-1 overflow-hidden rounded-3xl border">
@@ -211,8 +197,8 @@ setMessages((items) => [
                     <div
                       className={`max-w-[80%] rounded-3xl px-5 py-4 ${
                         message.role === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted"
+                          ? "bg-[#127173] text-white"
+                          : "bg-zinc-800 text-white"
                       }`}
                     >
                       <div className="whitespace-pre-wrap">
@@ -226,25 +212,51 @@ setMessages((items) => [
           </div>
 
           {/* Input */}
-          <div className="border-t p-4">
-            <div className="flex gap-3">
-              <Textarea
-                value={prompt}
-                onChange={(e) =>
-                  setPrompt(e.target.value)
-                }
-                placeholder="Ask MailPilot anything..."
-                className="min-h-[80px] resize-none"
-              />
+          <div className="p-4">
 
-              <Button
-                onClick={send}
-                disabled={isSending}
-                className="h-[80px] w-[80px] rounded-2xl"
-              >
-                <Send className="h-5 w-5" />
-              </Button>
-            </div>
+
+
+        <div className="relative">
+  <Textarea
+    value={prompt}
+    onChange={(e) => setPrompt(e.target.value)}
+    placeholder="Ask anything..."
+    className="
+      rounded-2xl
+      min-h-[80px]
+      resize-none
+      pr-14
+      border-zinc-800
+      bg-black
+      focus-visible:ring-0
+    "
+  />
+
+  <button
+    onClick={send}
+    disabled={isSending}
+    className="
+      absolute
+      bottom-4
+      right-4
+      flex
+      h-9
+      w-9
+      items-center
+      justify-center
+      rounded-full
+      bg-[#127173]
+      text-white
+      transition
+      hover:bg-[#0f5c5d]
+      disabled:opacity-50
+    "
+  >
+    <Send className="h-4 w-4" />
+  </button>
+</div>
+
+
           </div>
         </div>
       </Card>

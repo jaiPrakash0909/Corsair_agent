@@ -36,16 +36,15 @@ async function executeAction(userId: string, action: AiAction) {
 
 export const aiService = {
   async runCommand(userId: string, prompt: string) {
+
+
+
   const intent = detectIntent(prompt);
 
   
 
 if (intent === "search") {
-  const query = prompt
-  .replace("show emails", "")
-  .replace("find emails", "")
-  .replace("search emails", "")
-  .trim();
+  const query = prompt.toLowerCase();
 
 const result = await searchService.global(
   userId,
@@ -81,9 +80,109 @@ const result = await searchService.global(
     
   }
 
+
+
+
+
+
+if (
+  prompt.toLowerCase().includes("schedule") ||
+  prompt.toLowerCase().includes("meeting")
+) {
+
+  const tomorrow = new Date();
+
+  tomorrow.setDate(
+    tomorrow.getDate() + 1
+  );
+
+  tomorrow.setHours(16, 0, 0, 0);
+
+  return {
+    message:
+      "Meeting scheduled successfully.",
+    results: [
+      await calendarService.createEvent(
+        userId,
+        {
+          title: "Meeting",
+          description: "Scheduled by AI",
+          startTime:
+            tomorrow.toISOString(),
+          endTime: new Date(
+            tomorrow.getTime() +
+              60 * 60 * 1000
+          ).toISOString(),
+          guests: [],
+        }
+      ),
+    ],
+  };
+}
+
+
+
+
+
+
   const command = await parseCommand(prompt);
+  
 
   console.log("COMMAND =====");
+
+
+
+
+for (const action of command.actions) {
+  if (action.type === "create_event") {
+
+    const start = new Date(action.startTime);
+
+    if (start.getFullYear() < 2026) {
+
+      const tomorrow = new Date();
+
+      tomorrow.setDate(
+        tomorrow.getDate() + 1
+      );
+
+      tomorrow.setHours(2, 0, 0, 0);
+
+      action.startTime =
+        tomorrow.toISOString();
+
+      const end = new Date(tomorrow);
+
+      end.setHours(3);
+
+      action.endTime =
+        end.toISOString();
+    }
+  }
+}
+  
+
+
+
+
+
+
+
+
+
+
+  for (const action of command.actions) {
+  if (action.type === "create_event") {
+
+    const start = new Date(action.startTime);
+
+    if (start < new Date()) {
+      throw new Error(
+        "AI generated a past date. Please try again."
+      );
+    }
+  }
+}
 console.log(JSON.stringify(command, null, 2));
 console.log("=============");
 

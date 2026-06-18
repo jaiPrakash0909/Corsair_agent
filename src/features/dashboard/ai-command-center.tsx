@@ -77,7 +77,7 @@ overflow-hidden
         </h2>
 
         <p className="text-sm text-zinc-500">
-          Ask MailPilot to manage your emails and meetings.
+          Ask Camail_ai to manage your emails and meetings.
         </p>
       </div>
     </div>

@@ -124,9 +124,7 @@ C </div>
             {session.user.name ?? "User"}
           </p>
 
-          <p className="truncate text-xs text-zinc-500">
-            {session.user.email}
-          </p>
+          
         </div>
       </div>
 

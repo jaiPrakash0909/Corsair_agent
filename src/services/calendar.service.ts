@@ -55,29 +55,77 @@ export const calendarService = {
     return eventRepository.list(userId);
   },
   async createEvent(
+    
     userId: string,
     input: { title: string; description?: string; startTime: string; endTime: string; guests: string[] }
   ) {
+
+
+
+    console.log("===== CREATE EVENT =====");
+console.log("USER ID:", userId);
+console.log("INPUT:", input);
+
+
+
     await ensureCorsairTenantSetup(userId);
     const tenant = getCorsairTenant(userId) as any;
-    const created = await runFirstAvailable(
-      tenant,
-      [
-        ["googleCalendar", "api", "events", "create"],
-        ["googlecalendar", "api", "events", "create"]
-      ],
-      {
-        calendarId: "primary",
-        sendUpdates: "all",
-        event: {
-          summary: input.title,
-          description: input.description,
-          start: { dateTime: input.startTime },
-          end: { dateTime: input.endTime },
-          attendees: input.guests.map((email) => ({ email }))
-        }
+
+console.log(
+  "START ISO:",
+  new Date(input.startTime).toISOString()
+);
+
+console.log(
+  "END ISO:",
+  new Date(input.endTime).toISOString()
+);
+
+
+
+console.log(
+  "START ISO:",
+  new Date(input.startTime).toISOString()
+);
+
+console.log(
+  "END ISO:",
+  new Date(input.endTime).toISOString()
+);
+
+  
+let created;
+
+try {
+  created = await runFirstAvailable(
+    tenant,
+    [
+      ["googleCalendar", "api", "events", "create"],
+      ["googlecalendar", "api", "events", "create"]
+    ],
+    {
+      calendarId: "primary",
+      sendUpdates: "all",
+      event: {
+        summary: input.title,
+        description: input.description,
+        start: {
+  dateTime: new Date(input.startTime).toISOString(),
+},
+end: {
+  dateTime: new Date(input.endTime).toISOString(),
+},
+        attendees: input.guests.map((email) => ({ email }))
       }
-    );
+    }
+  );
+} catch (error) {
+  console.error("===== CREATE EVENT ERROR =====");
+  console.error(error);
+  throw error;
+}
+
+
 
     const data = (created as any)?.data ?? created;
     await eventRepository.upsertFromCorsair({
